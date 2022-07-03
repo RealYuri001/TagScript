@@ -10,10 +10,10 @@ class StopBlock(Block):
         return any([dec=="stop",dec=="halt"])
 
     def process(self, ctx : Interpreter.Context) -> Optional[str]:
-        if ctx.verb.parameter == None:
+        if ctx.verb.parameter is None:
             return None
         if helper_parse_if(ctx.verb.parameter):
             ctx.response.actions["TSE_STOP"] = True
-            return "" if ctx.verb.payload == None else ctx.verb.payload
+            return "" if ctx.verb.payload is None else ctx.verb.payload
         return ""
 

@@ -25,9 +25,9 @@ class PythonBlock(interface.Block):
     def process(self, ctx: Interpreter.Context):
         dec = ctx.verb.declaration.lower()
         if dec == "contains":
-            return str(bool(ctx.verb.parameter in ctx.verb.payload.split())).lower()
+            return str(ctx.verb.parameter in ctx.verb.payload.split()).lower()
         elif dec == "in":
-            return str(bool(ctx.verb.parameter in ctx.verb.payload)).lower()
+            return str(ctx.verb.parameter in ctx.verb.payload).lower()
         else:
             try:
                 return str(ctx.verb.payload.strip().split().index(ctx.verb.parameter))
@@ -189,6 +189,6 @@ class TestEdgeCases(unittest.TestCase):
         data = {
             "target":adapter.StringAdapter("Basic Username")
         }
-        
+
         with self.assertRaises(WorkloadExceededError):
             self.engine.process(script, data, 2000)

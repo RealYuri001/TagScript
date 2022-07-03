@@ -15,7 +15,7 @@ def build_node_tree(message : str) -> List['Interpreter.Node']:
         if ch == "{" and previous != r'\\':
             starts.append(i)
         if ch == "}" and previous != r'\\':
-            if len(starts) == 0:
+            if not starts:
                 continue
             coords = (starts.pop(), i)
             n = Interpreter.Node(coords)
@@ -36,7 +36,7 @@ class Interpreter(object):
             self.coordinates : Tuple[int,int] = coordinates
         
         def __str__(self):
-            return str(self.verb)+" at "+str(self.coordinates)
+            return f"{str(self.verb)} at {str(self.coordinates)}"
 
     class Context(object):
         """
@@ -102,13 +102,16 @@ class Interpreter(object):
                     n.output = value
                     break
 
-            if n.output == None:
+            if n.output is None:
                 continue # If there was no value output, no need to text deform.
 
-            if(charlimit is not None):
+            if (charlimit is not None):
                 total_work = total_work + len(n.output) # Record how much we've done so far, for the rate limit
-                if(total_work > charlimit):
-                    raise WorkloadExceededError("The TSE interpreter had its workload exceeded. The total characters attempted were " + str(total_work) + "/" + str(charlimit))
+                if (total_work > charlimit):
+                    raise WorkloadExceededError(
+                        f"The TSE interpreter had its workload exceeded. The total characters attempted were {str(total_work)}/{str(charlimit)}"
+                    )
+
 
             start, end = n.coordinates
             message_slice_len = (end+1) - start
@@ -119,7 +122,7 @@ class Interpreter(object):
             final = final[:start]+n.output+final[end+1:]
 
 
-            
+
             # if each coordinate is later than `start` then it needs the diff applied.
             for future_n in islice(node_ordered_list, i+1, None):
                 new_start = None
@@ -128,7 +131,7 @@ class Interpreter(object):
                     new_start = future_n.coordinates[0] + differential
                 else:
                     new_start = future_n.coordinates[0]
-                    
+
                 if future_n.coordinates[1] > start:
                     new_end = future_n.coordinates[1] + differential
                 else:
@@ -150,7 +153,7 @@ class Interpreter(object):
         output = self.solve(message_input, node_ordered_list, response, charlimit)
 
         # Dont override an overridden response.
-        if response.body == None:
+        if response.body is None:
             response.body = output.strip("\n ")
         else:
             response.body = response.body.strip("\n ")

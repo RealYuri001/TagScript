@@ -21,8 +21,4 @@ class StrfBlock(Block):
                     return None
         else:
             t = datetime.datetime.utcnow()
-        if ctx.verb.payload is not None:
-            result = t.strftime(ctx.verb.payload)
-            return result
-        else:
-            return None
+        return t.strftime(ctx.verb.payload) if ctx.verb.payload is not None else None
