@@ -9,9 +9,9 @@ class Verb(object):
         self.declaration : Optional[str] = None
         self.parameter : Optional[str] = None
         self.payload : Optional[str] = None
-        if verb_string == None:
+        if verb_string is None:
             return
-       
+
         parsed_string = verb_string[1:-1]
 
         dec_depth = 0
@@ -39,11 +39,10 @@ class Verb(object):
                     except IndexError:
                         pass
                     return
-        else:
-            res = parsed_string.split(":", 1)
-            if len(res) == 2:
-                self.payload = res[1]
-            self.declaration = res[0]
+        res = parsed_string.split(":", 1)
+        if len(res) == 2:
+            self.payload = res[1]
+        self.declaration = res[0]
 
 
     
@@ -53,9 +52,9 @@ class Verb(object):
         if self.declaration != None:
             response += self.declaration
         if self.parameter != None:
-            response += "("+self.parameter+")"
+            response += f"({self.parameter})"
         if self.payload != None:
-            response += ":"+self.payload
+            response += f":{self.payload}"
         return response + "}"
 
     def __repr__(self):

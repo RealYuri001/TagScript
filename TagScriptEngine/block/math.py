@@ -33,9 +33,11 @@ class NumericStringParser(object):
         """
         point = Literal(".")
         e = CaselessLiteral("E")
-        fnumber = Combine(Word("+-" + nums, nums) +
-                          Optional(point + Optional(Word(nums))) +
-                          Optional(e + Word("+-" + nums, nums)))
+        fnumber = Combine(
+            (Word(f"+-{nums}", nums) + Optional(point + Optional(Word(nums))))
+            + Optional(e + Word(f"+-{nums}", nums))
+        )
+
         ident = Word(alphas, alphas + nums + "_$")
         mod = Literal("%")
         plus = Literal("+")
@@ -123,8 +125,7 @@ class NumericStringParser(object):
     def eval(self, num_string, parseAll=True):
         self.exprStack = []
         results = self.bnf.parseString(num_string, parseAll)
-        val = self.evaluateStack(self.exprStack[:])
-        return val
+        return self.evaluateStack(self.exprStack[:])
 
 NSP = NumericStringParser()
 
@@ -135,7 +136,6 @@ class MathBlock(Block):
 
     def process(self, ctx : Interpreter.Context):
         try: 
-            result = str(NSP.eval(ctx.verb.payload.strip(" ")))
-            return result
+            return str(NSP.eval(ctx.verb.payload.strip(" ")))
         except:
             return None

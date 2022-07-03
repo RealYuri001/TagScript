@@ -44,17 +44,15 @@ def helper_split(split_string : str, easy : bool = True):
     """
     if "|" in split_string:
         return split_string.split("|")
-    if easy and "~" in split_string:
-        return split_string.split("~")
-    if easy and "," in split_string:
-        return split_string.split(",")
+    if easy:
+        if "~" in split_string:
+            return split_string.split("~")
+        if "," in split_string:
+            return split_string.split(",")
     return None
 
 def helper_parse_list_if(if_string):
     split = helper_split(if_string, False)
     if split is None:
         return [helper_parse_if(if_string)]
-    results = []
-    for item in split:
-        results.append(helper_parse_if(item))
-    return results
+    return [helper_parse_if(item) for item in split]
